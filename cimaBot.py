@@ -296,7 +296,7 @@ def menu(updates):
                     else:
                         send_message("Número de datos incorrecto", chat)
 
-                elif text.startswith("/monstruo"):
+                elif text.startswith("/monstruo") and chat in USERS:
                     data = text.split()
                     if len(data) == 3:
                         if int(data[2]) > 0 and int(data[2]) < 21:
@@ -315,7 +315,7 @@ def menu(updates):
                         send_message("Número de datos incorrecto. La sintaxis es /monstruo Cantidad VD", chat)
                     yourMonsters = ""
 
-                elif text.startswith("/aventurero"):
+                elif text.startswith("/aventurero") and chat in USERS:
                     data = text.split()
                     l = len(data)
                     if l > 1:
@@ -341,7 +341,7 @@ def menu(updates):
                         send_message("Número de datos incorrecto. La sintaxis es /aventurero NombrePJ", chat)
                     yourChars = ""
 
-                elif text.startswith("/calcular"):
+                elif text.startswith("/calcular") and chat in USERS:
                     data = text.split()
                     if len(data) == 1:
                         if user in monstersOK and user in charsOK:
@@ -410,7 +410,7 @@ def menu(updates):
                 elif text == "Consultar transacciones de un miembro" and chat in USERS:
                     send_message("Para consultar las transacciones de un miembro, utiliza el comando /miembro seguido del nombre de la persona. Ejemplo; /miembro Juan", chat)
 
-                elif text == "Consultar últimas transacciones":
+                elif text == "Consultar últimas transacciones" and chat in USERS:
                     last(chat)
 
                 elif text == "Eliminar la última transacción" and user == ADMIN:
@@ -427,7 +427,7 @@ def menu(updates):
                     send_message("Para ascender a un aventurero, utiliza el comando /ascender seguido del nombre del aventurero y su nuevo rango. Ejemplo: /ascender Jon Snow comandante", chat)
                 elif text == "Subir de nivel un aventurero" and chat in USERS:
                     send_message("Para subir de nivel a un aventurero, utiliza el comando /subir_nivel seguido del nombre del aventurero y su nuevo nivel. Ejemplo: /subir_nivel Jon Snow 6", chat)
-                elif text == "Buscar aventureros":
+                elif text == "Buscar aventureros" and chat in USERS:
                     send_message("Utiliza los comandos /personajes seguido del nombre de un jugador o /rango seguido de un rango para ver la lista de personajes con esas características. Ejemplos: /personajes Luis o /rango Novato", chat)
                 elif text == "Calcular experiencia" and chat in USERS:
                     send_message("Para calcular la experiencia por combate, introduce los monstruos derrotados usando el comando /monstruo seguido de la cantidad de monstruos de ese tipo y de su Valor de Desafío (un comando por cada tipo de criatura). Ejemplo: /monstruo 2 8 añadiría dos monstruos de VD 8. \n A continuación añade los aventureros participantes usando el comando /aventurero seguido de su nombre (deben estar registrado en la base de datos). Ejemplo: /aventurero Jon Snow. \n Por último, utiliza el comando /calcular para indicar que has acabado de introducir los datos y recibirás la experiencia a repartir.", chat)
@@ -435,7 +435,7 @@ def menu(updates):
                     send_message("Para publicar una misión, envíame el texto comenzando con #nombreDeLaMision y a continuación el mensaje de la misión. Ejemplo: #orcosSexysEnTuZona blablabla. Si lo envías al grupo, anclaré el mensaje, si no, simplemente lo reenviaré.", chat)
                 elif text == "Aposteitor" and chat in USERS:
                     send_message("En construcción", chat)
-                else:
+                elif chat in USERS:
                     send_message("No te he entendido bien, ¿me lo repites?", chat)
             else:
                 send_message("Aún no tienes acceso a este bot.", chat)
