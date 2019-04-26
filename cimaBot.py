@@ -1,7 +1,7 @@
 ####################################
 ##############CIMABOT###############
 ###ASOCIACIÓN CIMA DE LOS VIENTOS###
-####### @Luis_gar # @Seind #########
+## @Luis_gar # @Seind # @Mireyaca ##
 ####################################
 
 import json
@@ -155,30 +155,52 @@ def last(chat):
 def characters(player, chat):
     t = aventureros.get_characters(player)
     string = ""
-    for w in t:
-        l = len(w)
-        rank = w[l-1]
-        lvl = int(w[l-2])
-        name = w[1]
-        if l-3 > 1:
-            for x in range(2, l-2):
-                name = name + " " + w[x]
-        string = string + "Jugador: " + w[0] + " PJ: " + name + " " + "Nivel: " + str(lvl) + " " + "Rango: " + rank +"\n"
-    send_message(string, chat)
+    if not t:
+        send_message("El jugador introducido no es correcto. Debe ser uno de los siguientes {}".format(USERNAMES), chat)
+    else:
+        for w in t:
+            l = len(w)
+            rank = w[l-1]
+            lvl = int(w[l-2])
+            name = w[1]
+            if l-3 > 1:
+                for x in range(2, l-2):
+                    name = name + " " + w[x]
+            string = string + "Jugador: " + w[0] + " PJ: " + name + " " + "Nivel: " + str(lvl) + " " + "Rango: " + rank +"\n"
+        send_message(string, chat)
 
 def ranks(rank, chat):
     t = aventureros.get_ranks(rank)
     string = ""
-    for w in t:
-        l = len(w)
-        rank = w[l-1]
-        lvl = int(w[l-2])
-        name = w[1]
-        if l-3 > 1:
-            for x in range(2, l-2):
-                name = name + " " + w[x]
-        string = string + "Jugador: " + w[0] + " PJ: " + name + " "  + "Nivel: " + str(lvl) + " " + "Rango: " + rank +"\n"
-    send_message(string, chat)
+    if not t:
+        send_message("El rango introducido no es correcto. Debe ser uno de los siguientes {}".format(RANGOS), chat)
+    else:
+        for w in t:
+            l = len(w)
+            rank = w[l-1]
+            lvl = int(w[l-2])
+            name = w[1]
+            if l-3 > 1:
+                for x in range(2, l-2):
+                    name = name + " " + w[x]
+            string = string + "Jugador: " + w[0] + " PJ: " + name + " "  + "Nivel: " + str(lvl) + " " + "Rango: " + rank +"\n"
+        send_message(string, chat)
+
+def mergeMonsters(monsters, chat): 
+    vdVector = []
+    for m in monsters:
+        exponent = math.log(m[1],2) #Para monstruos iguales, se halla el bonus por cantidad mediante interpolación logarítmica
+        if m[2] < 1:
+            auxVD = (1 + 2*exponent)*m[2]
+        else:
+            auxVD = m[2] + 2*exponent
+        if auxVD > 20:
+            auxVD = 20
+            send_message("El VD de uno de los encuentros introducidos supera VD20. Considera repartir experiencia adicional.", chat)
+        vdVector.append(round(auxVD))
+    print(vdVector)
+    send_message("Se han reducido los monstruos de igual VD a monstruos únicos de VDs: {}".format(vdVector), chat)
+    return vdVector
 
 def menu(updates):
     for update in updates["result"]:
@@ -294,13 +316,16 @@ def menu(updates):
                     if len(data) == 2:
                         ranks(data[1], chat)
                     else:
-                        send_message("Número de datos incorrecto", chat)
+                        send_message("Número de datos incorrecto. La sintaxis es /rango rangoABuscar", chat)
 
                 elif text.startswith("/monstruo") and chat in USERS:
                     data = text.split()
                     if len(data) == 3:
-                        if int(data[2]) > 0 and int(data[2]) < 21:
-                            aux = [user,int(data[1]),int(data[2])]
+                        d = float(data[2])
+                        if float(d > 0 and d < 21):
+                            if d >= 1:
+                                d = int(data[2])
+                            aux = [user,int(data[1]),d]
                             monsters.append(aux)
                             yourMonsters = ""
                             for x in monsters:
@@ -353,15 +378,16 @@ def menu(updates):
                             for x in chars:
                                 if x[0] == user:
                                     yourChars.append(x)
+                            VDs = mergeMonsters(yourMonsters, chat)
                             exp = 0
                             report = ""
                             l = len(yourChars)
                             for c in yourChars:
-                                for m in yourMonsters:
-                                    exp = exp + expTable[c[2]-1][m[2]-1] * m[1]
+                                for monster in VDs:
+                                    exp = exp + expTable[c[2]-1][monster-1]
                                 c[3] = exp / l
                                 exp = 0
-                                report = report + c[1] + " recibe: " + str(c[3]) + " puntos de experiencia \n"
+                                report = report + c[1] + " recibe: " + str(round(c[3])) + " puntos de experiencia \n"
                             send_message(report, chat);
                             f = 1
                             while f == 1:
