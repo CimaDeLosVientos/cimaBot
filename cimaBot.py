@@ -1,7 +1,7 @@
 ####################################
 ##############CIMABOT###############
 ###ASOCIACIÓN CIMA DE LOS VIENTOS###
-## @Luis_gar # @Seind # @Mireyaca ##
+# @Luis_gar # @Seind # @DarkSaytan #
 ####################################
 
 import json
