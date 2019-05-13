@@ -17,5 +17,8 @@ Deberás iniciar un chat con @BotFather y seguir los pasos que te indica para re
 - Opcionalmente, puedes elegir un administrador, añadiendo su ID a la variable ADMIN
 - Para usar la función "Publicar una misión en el tablón", deberás añadir tu bot a un grupo y concederle permisos de administrador. Además, deberás añadir el ID del grupo a la variable GROUPID. Para localizar el ID del grupo, deberás poner en marcha el bot y añadirlo a dicho grupo. Recibirás una actualización en la consola de comandos y deberás localizar el texto '"chat":{"id":-xxxxxx}' donde "-xxxxxxxxx" es el número que buscas.
 - Para ejecutar el bot, navega desde la terminal hasta el directorio donde guardaste los archivos .py y ejecuta el comando "python3 cimaBot.py". A partir de ese momento, tu bot estará operativo y podrá responder a tus mensajes. Podrás ver en la terminal todos los mensajes que le lleguen y, en caso de surgir algún problema, se te notificará también en la terminal.
+### Ejecución avanzada
+Puedes usar el script de bash cimaBot para ejecutar el bot. Este script, además, lo reiniciará periódicamente si se cae por un problema de conexión aleatorio.
+
 ### Acerca del cimaBot
 El bot ha sido desarrollado por @Luis_gar , @Seind y @DarkSaytan como parte de la actividad de la Asociación https://t.me/cimadelosvientos (@CimaDelViento en Twitter)
