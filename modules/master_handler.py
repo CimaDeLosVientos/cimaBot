@@ -7,23 +7,23 @@ import sys
 import math
 import random
 
-from config import *
+from .config import *
 
-from methods import income, payment, total, member, last, characters, ranks, mergeMonsters, giveExp, giveMoney, takeMoney, showQuests, findQuest, showTriggers, showTournament, showInscriptions
+from .util.methods import income, payment, total, member, last, characters, ranks, mergeMonsters, giveExp, giveMoney, takeMoney, showQuests, findQuest, showTriggers, showTournament, showInscriptions
+from .util.telegram_methods import *
+from .util.db_helper import DBHelper
+from .util.checkinator import *
 
-from telegram_methods import *
+from .handlers import prueba
 
-from checkinator import *
-import aposteitor.aposteitor as aposteitor
+from .aposteitor import aposteitor
 
-from db_helper import DBHelper
-
-db = DBHelper("data_base_files/finances.sqlite")
-aventureros = DBHelper("data_base_files/adventurers.sqlite")
-misiones = DBHelper("data_base_files/missions.sqlite")
-triggers = DBHelper("data_base_files/triggers.sqlite")
-cambios = DBHelper("data_base_files/log.sqlite")
-inscripciones = DBHelper("data_base_files/registrations.sqlite")
+db = DBHelper("./data_base_files/finances.sqlite")
+aventureros = DBHelper("./data_base_files/adventurers.sqlite")
+misiones = DBHelper("./data_base_files/missions.sqlite")
+triggers = DBHelper("./data_base_files/triggers.sqlite")
+cambios = DBHelper("./data_base_files/log.sqlite")
+inscripciones = DBHelper("./data_base_files/registrations.sqlite")
 
 ######################################################################
 #################### PARÁMETROS MODIFICABLES #########################
@@ -220,14 +220,14 @@ def handle(update):
 
 ## Generic comands
 
-def command_ping(arguments):
-    """
-    Classic ping. Checks bot's state.
+# def command_ping(arguments):
+#     """
+#     Classic ping. Checks bot's state.
     
-    :param      arguments:  The arguments
-    :type       arguments:  Dictionary
-    """
-    send_message("Estoy vivo", arguments['chat'])
+#     :param      arguments:  The arguments
+#     :type       arguments:  Dictionary
+#     """
+#     send_message("Estoy vivo", arguments['chat'])
 
 
 def command_echo(arguments):
@@ -577,7 +577,10 @@ def command_winner(arguments):
     for winner_name in winners_names:
         winners.append(aposteitor_rounds[arguments['chat']].get_competitor_by_name(winner_name))
     aposteitor_rounds[arguments['chat']].proclaim_winner(winners)
-    reply, earnings = aposteitor_rounds[arguments['chat']].distribute_prize(winners)
+    reply = aposteitor_rounds[arguments['chat']].distribute_prize(winners)
+
+    # Aquí se reparten los dineros a los juegadores
+    earnings = []
 
     for x in earnings: # Add money to the winning characters' accounts
         adv = aventureros.get_pj(x[0])
@@ -1058,7 +1061,7 @@ def command_eliminar_transaccion(arguments):
 
 # Command dictionaries
 commands_with_backslash = {
-    '/ping'                 : command_ping,
+    '/ping'                 : prueba.command_ping,
     '/echo'                 : command_echo,
     '/roll'                 : command_roll,
     '/sum'                  : command_sum,
@@ -1096,7 +1099,7 @@ commands_with_backslash = {
 }
 
 commands_without_backslash = {
-    'ping'                                          : command_ping,
+    'ping'                                          : prueba.command_ping,
 	'💶️ Finanzas 💶️'                                : command_finanzas,
 	'Registrar un ingreso 📥'                       : command_ingreso,
 	'Registrar un pago 📤'                          : command_pago,

@@ -7,7 +7,7 @@ import sys
 import math
 import random
 
-from config import *
+from ..config import *
 
 
 def make_request(url):

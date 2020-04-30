@@ -6,8 +6,8 @@ import urllib
 import sys
 import math
 import random
-from telegram_methods import *
-from config import *
+from .telegram_methods import *
+from ..config import *
 
 def income(db, name, date, money, chat):
     if name in USERNAMES:
