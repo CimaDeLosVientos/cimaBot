@@ -1,9 +1,10 @@
 # coding=utf-8
 def checkinator(*templates, contains_command):
     def checkinator_decorator(function):
-        def checked_function(arguments):
+        def checked_function(self_object, arguments=None):
             """
             Evaluates each of the parameters given with the expected quantity and the required evaluation functions.
+            The self_object parameter exists to make the check functional for an object function and a global function.
             
             :param      arguments:         The arguments
             :type       arguments:         Dictionary
@@ -12,6 +13,10 @@ def checkinator(*templates, contains_command):
             :param      contains_command:  Indicator of the presence of a command in the text
             :type       contains_command:  Boolean
             """
+            has_self_object = True
+            if arguments == None:
+                arguments = self_object
+                has_self_object = False
             elements = arguments['text'].split()[1:] if contains_command == True else arguments['text'].split() 
             if len(elements) != len(templates):
                 raise TypeError("El número de argumentos es incorrecto. La función utiliza {} y se han indicado {}".format(len(templates), len(elements)))
@@ -20,6 +25,8 @@ def checkinator(*templates, contains_command):
                     arguments[templates[index][0]] = templates[index][1](elements[index])
                 else: # With parameters
                     arguments[templates[index][0]] = templates[index][1](elements[index], templates[index][2])
+            if has_self_object:
+                return function(self_object, arguments)
             return function(arguments)
         return checked_function
     return checkinator_decorator
