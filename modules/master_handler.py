@@ -22,7 +22,7 @@ from .handlers.aposteitor_handler import AposteitorHandler
 
 db = DBHelper("./data_base_files/finances.sqlite")
 aventureros = DBHelper("./data_base_files/adventurers.sqlite")
-misiones = DBHelper("./data_base_files/missions.sqlite")
+misiones = DBHelper("./data_base_files/quests.sqlite")
 triggers = DBHelper("./data_base_files/triggers.sqlite")
 cambios = DBHelper("./data_base_files/log.sqlite")
 inscripciones = DBHelper("./data_base_files/registrations.sqlite")
