@@ -1,0 +1,1 @@
+Quizá no merece la pena esta clase
