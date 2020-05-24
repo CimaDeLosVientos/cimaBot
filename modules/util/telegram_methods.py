@@ -140,7 +140,9 @@ def send_gif(file_id, chat_id):
     url = "sendAnimation?&chat_id={}&animation={}&parse_mode=html".format(chat_id, file_id)
     make_request(url)
 
+# HACER EL DE STICKERS
 
+# HACER "DE NADA"
 def pin_message(chat_id, message_id, notify = False):
     """
     Pins a message in a chat.

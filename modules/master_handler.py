@@ -12,6 +12,7 @@ from .config import *
 from .util.methods import * #income, payment, total, member, last, characters, ranks, mergeMonsters, giveExp, giveMoney, takeMoney, showQuests, findQuest, showTriggers, showTournament, showInscriptions
 from .util.telegram_methods import *
 from .util.db_helper import DBHelper
+from .util.db_helper_guild import DBHelperGuild
 from .util.checkinator import *
 from .util.states_handler import *
 
@@ -30,10 +31,12 @@ db = DBHelper(
     log           = "./data_base_files/log.sqlite",                                                                                                                                                                                                                                                                     
     registrations = "./data_base_files/registrations.sqlite")
 
+db.setup()
 aposteitor = AposteitorHandler(db)
 helen = GuildHandler(db)
 rol = RolHelpMenusHandler(db)
 asoc = AsocHelpMenusHandler(db)
+tested = prueba.Tested(DBHelperGuild("./data_base_files/testing.sqlite"))
 
 ######################################################################
 #################### PARÁMETROS MODIFICABLES #########################
@@ -86,20 +89,17 @@ def handle(update):
     :type       update:  Update
     """
 
-    db.setup_finantial()
-    aventureros.setup_adventurers()
-    misiones.setup_quests()
-    triggers.setup_triggers()
-    cambios.setup_changes()
-    inscripciones.setup_enrollment()
 
     if 'message' in update and 'text' in update["message"]:
             arguments = {
                 'text' : update["message"]["text"],
                 'chat' : update["message"]["chat"]["id"],
                 'user' : update["message"]["from"]["id"],
-                'message' : update["message"]["message_id"]
+                'message' : update["message"]["message_id"],
+                'reply_to_message' : None
             }
+            if 'reply_to_message' in update["message"].keys(): # Only replies have this field
+                arguments['reply_to_message'] = update["message"]["reply_to_message"]
             if not arguments['user'] in USERS:
                 send_message("Aún no tienes acceso a este bot.", arguments['chat'])
                 return
@@ -118,7 +118,7 @@ def handle(update):
             ongoing_processes[arguments['chat']][arguments['user']].run(arguments)
         else:
             # First, check if the message is a registered trigger
-            answer = triggers.get_trigger(arguments['text'])
+            answer = db.get_trigger(arguments['text'])
             if answer:
                 if answer[0][1] == "texto":
                     send_message("{}".format(answer[0][2]), arguments['chat'])
@@ -265,15 +265,15 @@ def command_set_trigger(update):
     if len(data) > 0:
         if 'reply_to_message' in update["message"]:
             if 'text' in update["message"]["reply_to_message"]:                               
-                triggers.add_trigger(data, "texto", update["message"]["reply_to_message"]["text"])
+                db.add_trigger(data, "texto", update["message"]["reply_to_message"]["text"])
                 send_message("Trigger añadido correctamente.", update["message"]["chat"]["id"])
             if 'photo' in update["message"]["reply_to_message"]:
                 fileID =  update["message"]["reply_to_message"]["photo"][-1]["file_id"]
-                triggers.add_trigger(data, "foto", fileID)
+                db.add_trigger(data, "foto", fileID)
                 send_message("Trigger añadido correctamente.", update["message"]["chat"]["id"])
             if 'animation' in update["message"]["reply_to_message"]:
                 fileID =  update["message"]["reply_to_message"]["animation"]["file_id"]
-                triggers.add_trigger(data, "gif", fileID)
+                db.add_trigger(data, "gif", fileID)
                 send_message("Trigger añadido correctamente.", update["message"]["chat"]["id"])
         else:
             send_message("Para crear un trigger, responde a un mensaje con el comando /set_trigger y el nombre.", update["message"]["chat"]["id"])
@@ -329,7 +329,8 @@ commands_with_backslash = {
 	'/monstruo'             : helen.inline_monstruo,
 	'/aventurero'           : helen.inline_aventurero,
 	'/calcular'             : helen.inline_calcular,
-	'/inscripciones'        : helen.inline_inscripciones
+	'/inscripciones'        : helen.inline_inscripciones,
+    '/login'                : tested.command_registration
     
     
 }
